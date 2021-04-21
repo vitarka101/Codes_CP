@@ -36,6 +36,32 @@ int num_code_DP(int *arr , int n ,int *output)
         return count;
 }
 
+// Best Solution
+
+int num_code_iter(int *arr,int n)
+{
+        int *output = new int[n+1];
+	
+	// 0 , 1 are all lengths
+        output[0] = 1;
+        output[1] = 1;
+
+        for(int i=2;i<=n;i++)
+        {
+                output[i] = output[i-1];
+               // since we are decreasing the size from the end
+               if( arr[i-2]*10 + arr[i-1] <= 26)
+                output[i] += output[i-2];
+        }
+
+        int op = output[n];
+
+        delete [] output;
+
+        return op;
+}
+
+
 int main()
 {
 	string s;
@@ -54,5 +80,7 @@ int main()
 	
 	int *output = new int[s.size()+1];  // size 0 to n
 	cout<< num_code_DP(arr,s.size(),output)<<endl;
+
+	cout<<num_code_iter(arr,s.size())<<endl;
 	return 0;
 }
