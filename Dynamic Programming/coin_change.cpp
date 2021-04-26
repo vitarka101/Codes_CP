@@ -28,8 +28,8 @@ int coin_changeDP(int n,int *d,int numD,int **arr)
 	if(arr[n][numD] > -1) // 0 is a possibility
 		return arr[n][numD];
 
-        int first = coin_change(n-d[0],d,numD);
-        int second = coin_change(n,d+1,numD-1);
+        int first = coin_changeDP(n-d[0],d,numD,arr);
+        int second = coin_changeDP(n,d+1,numD-1,arr);
 
 	int output = first + second;
 	
