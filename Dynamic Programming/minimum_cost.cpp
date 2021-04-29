@@ -84,7 +84,11 @@ int min_cost_iter(int **arr , int si , int sj , int ei , int ej)
 			output[i][j] = arr[i][j] + min(output[i+1][j] , min(output[i+1][j+1] , output[i][j+1]));
 	}
 
-	return output[si][sj];
+	int op = output[si][sj];
+
+	delete [] output;
+
+	return op;
 }
 
 
