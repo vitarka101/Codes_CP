@@ -1,9 +1,60 @@
-// Test case 4 wrong
+// Test case 4 wrong for recursive and recursive DP
 
 #include<bits/stdc++.h>
 using namespace std;
 
-int getStrength(int **grid,int n,int m,int si,int sj,int **health)
+#include<bits/stdc++.h>
+using namespace std;
+    
+int getMinimumStrength_iter(int** grid, int n, int m) {
+	// Write your code here
+    
+    int **arr = new int*[n];
+    
+    for(int i=0;i<n;i++)
+    {
+        arr[i] = new int[m];
+    }
+    
+    arr[n-1][m-1] = 1;
+    arr[n-1][m-2] = 1;
+    arr[n-2][m-1] = 1;
+    
+    for(int j=m-3;j>=0;j--)
+    {
+        arr[n-1][j] = arr[n-1][j+1] - grid[n-1][j+1];
+        if(arr[n-1][j] <= 0)
+            arr[n-1][j] = 1;
+    }
+    
+    for(int i=n-3;i>=0;i--)
+    {
+        arr[i][m-1] = arr[i+1][m-1] - grid[i+1][m-1];
+        if(arr[i][m-1] <= 0)
+            arr[i][m-1] = 1;
+    }
+    
+    for(int i=n-2;i>=0;i--)
+    {
+        for(int j=m-2;j>=0;j--)
+        {
+            int right = arr[i][j+1] - grid[i][j+1];
+            if(right<=0)
+                right=1;
+            
+            int bottom = arr[i+1][j] - grid[i+1][j];
+            if(bottom<=0)
+                bottom=1;
+            
+            arr[i][j] = min(right,bottom);
+        }
+    }
+    
+    return arr[0][0];
+}
+
+
+int getMinimumStrength_DP(int **grid,int n,int m,int si,int sj,int **health)
 {
    	int cost1 = INT_MAX;
 	int cost2 = INT_MAX;
@@ -18,7 +69,7 @@ int getStrength(int **grid,int n,int m,int si,int sj,int **health)
 
     if(sj+1 < m)
     {
-        cost1 = getStrength(grid,n,m,si,sj+1,health) - grid[si][sj];
+        cost1 = getMinimumStrength_DP(grid,n,m,si,sj+1,health) - grid[si][sj];
         if(cost1 <= 0)
         {
             cost1 = 1;
@@ -27,7 +78,7 @@ int getStrength(int **grid,int n,int m,int si,int sj,int **health)
      
     if(si+1 < n)
     {
-        cost2 = getStrength(grid,n,m,si+1,sj,health) - grid[si][sj];
+        cost2 = getMinimumStrength_DP(grid,n,m,si+1,sj,health) - grid[si][sj];
         if(cost2 <= 0)
         {
             cost2 = 1;
@@ -42,27 +93,49 @@ int getStrength(int **grid,int n,int m,int si,int sj,int **health)
 
 }
 
-int getMinimumStrength(int** grid, int n, int m) {
-	// Write your code here
-    if(n==0 || m==0)
-        return 1;
-    if(n==1 && m==1)
+
+int getMinimumStrength(int **grid,int n,int m,int si,int sj)
+{
+   	int cost1 = INT_MAX;
+	int cost2 = INT_MAX;
+    if(si == n-1 && sj == m-1)
     {
-        if(grid[0][0]>0)
-            return 1;
-        else
-            return 1-grid[0][0];
+        return 1;
     }
-    
-    int **health = new int *[n];
 
-        for (int i = 0; i < n; ++i) {
-            health[i] = new int[m];
+ 
+    if(sj+1 < m)
+    {
+        cost1 = getMinimumStrength(grid,n,m,si,sj+1) - grid[si][sj+1];
+        if(cost1 == 0)
+        {
+            cost1 = 1;
         }
+        if(cost1 < 0)
+        {
+            cost1 = -1*cost1;
+        }
+    }
+     
+    if(si+1 < n)
+    {
+        cost2 = getMinimumStrength(grid,n,m,si+1,sj) - grid[si+1][sj];
+        if(cost2 == 0)
+        {
+            cost2 = 1;
+        }
+        if(cost2 < 0)
+        {
+            cost2 = -1*cost2;
+        }
+    }
+     
 
-    int ans = getStrength(grid,n,m,0,0,health);
-    return ans;
+    return min(cost1,cost2);
+
+
 }
+
 
 int main() {
     int t;
@@ -80,7 +153,17 @@ int main() {
             }
         }
 
-        cout << getMinimumStrength(grid, n, m) << "\n";
+	int **health = new int*[n];
+	for(int i=0;i<n;i++)
+	{
+		health[i] = new int[m];
+	}
+
+
+	cout<<"Iteartive Solution -----> "<<getMinimumStrength_iter(grid,n,m)<<endl;
+	cout<<"Recursive Solution with DP -------> "<<getMinimumStrength_DP(grid,n,m,0,0,health)<<endl;
+	// Using basic recursion
+        cout <<"Bsic Recursive Solution ------> "<< getMinimumStrength(grid, n, m,0,0) << "\n";
 
         for (int i = 0; i < n; ++i) {
             delete[] grid[i];
