@@ -3,10 +3,45 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-#include<bits/stdc++.h>
-using namespace std;
+  
+ // Better Code Optimization
     
-int getMinimumStrength_iter(int** grid, int n, int m) {
+int getMinimumStrength_iter1(int** grid, int n, int m) {
+	// Write your code here
+    
+    int **arr = new int*[n+1];
+    
+    for(int i=0;i<=n;i++)
+    {
+        arr[i] = new int[m+1];
+    
+        for(int j=0;j<=m;j++)
+        {
+            arr[i][j] = INT_MAX;
+        }
+    }
+    
+    
+    // So as to get 1 at arr[n-1][m-1]
+    
+    arr[n][m-1] = 1;
+    arr[n-1][m] = 1;
+    
+    for(int i=n-1;i>=0;i--)
+    {
+        for(int j=m-1;j>=0;j--)
+        {
+            int min_health = min( arr[i+1][j] , arr[i][j+1] ) - grid[i][j] ;
+            arr[i][j] = (min_health <= 0) ? 1 : min_health;
+            
+        }
+    }
+    
+    return arr[0][0];
+}
+    
+    
+int getMinimumStrength_iter2(int** grid, int n, int m) {
 	// Write your code here
     
     int **arr = new int*[n];
@@ -159,8 +194,8 @@ int main() {
 		health[i] = new int[m];
 	}
 
-
-	cout<<"Iteartive Solution -----> "<<getMinimumStrength_iter(grid,n,m)<<endl;
+	cout<<"Iteartive Solution 1(Better Optimized) -----> "<<getMinimumStrength_iter1(grid,n,m)<<endl;	
+	cout<<"Iteartive Solution  2-----> "<<getMinimumStrength_iter2(grid,n,m)<<endl;
 	cout<<"Recursive Solution with DP -------> "<<getMinimumStrength_DP(grid,n,m,0,0,health)<<endl;
 	// Using basic recursion
         cout <<"Bsic Recursive Solution ------> "<< getMinimumStrength(grid, n, m,0,0) << "\n";
