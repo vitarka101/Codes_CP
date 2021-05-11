@@ -3,22 +3,94 @@ using namespace std;
 
 typedef long long ll;
 
-ll max_sum_adv(int **arr , int n , int m)
+int kadane(int *arr , int n)
 {
-	int **sum_rect = new int*[n];
+	int max_sum = INT_MIN;
+	int curr_sum = 0;
 
 	for(int i=0;i<n;i++)
 	{
-		sum_rect[i] = new int[m];
+		curr_sum = curr_sum + arr[i];
+
+		if(max_sum < curr_sum)
+		{
+			max_sum = curr_sum;
+		}
+
+		if(curr_sum < 0)
+		{
+			curr_sum = 0;
+	
+		}
 	}
 
-	for(int left=0;left<n;left++)
+	return max_sum;
+}
+
+
+int max_sum_adv(int **arr , int n , int m)
+{
+	int max_sum_rectangle = INT_MIN;
+
+	for(int left=0;left<m;left++)
 	{
-		for(int right=left;right<n;right++)
+		int *sum_rect = new int[n];
+		for(int right=left;right<m;right++)
 		{
-			sum_rect[left][right] = accumulate(arr+left , arr+right+1 , 0);
+			for(int i=0;i<n;i++)
+			{
+				sum_rect[i] = sum_rect[i] + arr[i][right];
+				
+			}
+
+			int res = kadane(sum_rect,n);
+
+	                if(max_sum_rectangle < res)
+        	        {
+                	        max_sum_rectangle = res;
+               		}
+		}
+	}
+
+	return max_sum_rectangle;
+}
 
 
+/* Mine */ 
+
+/*
+int max_sum_adv(int **arr , int n , int m)
+{
+	int *sum_rect = new int[n];
+
+	int max_sum_rectangle = INT_MIN;
+
+	for(int left=0;left<m;left++)
+	{
+		for(int right=left;right<m;right++)
+		{
+			for(int i=0;i<n;i++)
+			{
+				sum_rect[i] = 0;
+				for(int j=left;j<=right;j++)
+				{
+					sum_rect[i] = sum_rect[i] + arr[i][j];
+				}
+			}
+
+			int res = kadane(sum_rect,n);
+
+	                if(max_sum_rectangle < res)
+        	        {
+                	        max_sum_rectangle = res;
+               		}
+		}
+	}
+
+	return max_sum_rectangle;
+}
+
+*/
 
 ll max_sum_base(int **arr , int n ,int m)
 {
